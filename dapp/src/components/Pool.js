@@ -12,7 +12,7 @@ const InfoBox = ({children, ...props}) => (
 )
 
 const Pool = () => {
-  const { active, chainId, account, error, library } = useWeb3React();
+  const { active, account, error, library } = useWeb3React();
   const [errMessage, setErrMessage] = useState(undefined)
   const [loading, setLoading] = useState(false)
 
@@ -39,8 +39,11 @@ const Pool = () => {
     if (active) {
       const init = async () => {
 
-        const totalSupplyValue = await cToken.methods.totalSupply().call()
-        setTotalSupplied(web3.utils.fromWei(totalSupplyValue, 'ether'))
+        // TODO research again what is total supply
+        const contractBalance = await library.eth.getBalance("0x859e9d8a4edadfedb5a2ff311243af80f85a91b8")
+        // TODO use Rinkeby !!!!!!!!!!!!
+        // const contractBalance = await library.eth.getBalance("0xd6801a1dffcd0a410336ef88def4320d6df1883e")
+        setTotalSupplied(web3.utils.fromWei(contractBalance, 'ether'))
 
         /* get supplied */
         const balanceOfUnderlying = web3.utils.toBN(await cToken.methods
@@ -132,8 +135,14 @@ const Pool = () => {
       console.error(e)
       setErrMessage(e)
     }
+  }
 
-    
+  const handleOnClickMaxSupply = () => {
+    setInputSupplyAmount(ethBalance)
+  }
+
+  const handleOnClickMaxWithdraw = () => {
+    setInputWithdrawAmount(cEthBalance)
   }
 
   return (
@@ -154,6 +163,7 @@ const Pool = () => {
             <div className='flex flex-col'>
               <h1>Supply</h1>
               <p>Balance: {ethBalance} ETH</p>
+              <span className='self-end text-md text-blue-400 underline cursor-pointer' onClick={handleOnClickMaxSupply}>Max</span>
               <input type="number" className='w-half px-2 pb-1.5 text-primary text-base font-light rounded-md border-2 border-pink-300' onChange={handleOnChangeSupplyInput} value={inputSupplyAmount} />
               <p>Receiving: {inputSupplyAmount / cEthExchangeRate} cETH</p>
               <button onClick={handleOnSupply}>Supply</button>
@@ -161,6 +171,7 @@ const Pool = () => {
             <div className='flex flex-col'>
               <h1>Withdraw</h1>
               <p>Balance: {cEthBalance} cETH</p>
+              <span className='self-end text-md text-blue-400 underline cursor-pointer' onClick={handleOnClickMaxWithdraw}>Max</span>
               <input type="number" className='w-half px-2 pb-1.5 text-primary text-base font-light rounded-md border-2 border-pink-300' onChange={handleOnChangeWithdrawInput} value={inputWithdrawAmount} />
               <p>Receiving: {inputWithdrawAmount * cEthExchangeRate} ETH</p>
               <button onClick={handleOnWithdraw}>Withdraw</button>
