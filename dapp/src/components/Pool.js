@@ -63,7 +63,7 @@ const Pool = () => {
       }
       init()
     }
-  }, [])
+  }, [active])
 
   const handleOnSupply = async () => {
     //     // Mint some cETH by supplying ETH to the Compound Protocol
@@ -80,7 +80,7 @@ const Pool = () => {
     {active && 
         <>
             <div className="wallet-info">
-                <p>Your Supplied: {userSupplied} ETH</p>
+                <p cal>Your Supplied: {userSupplied} ETH</p>
                 <p>Total Supplied: {totalSupplied} ETH</p>
                 <p>APY: {apy} %</p>
             </div>
