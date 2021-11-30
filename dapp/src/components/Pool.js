@@ -1,32 +1,44 @@
 import { useWeb3React } from '@web3-react/core';
 import { useEffect, useState } from 'react';
+import Input from './Input'
 // TODO: use Rinkeby
 import cETH_ABI from  '../constant/ABI/cETH-Ropsten.json'
 import web3 from 'web3'
 
 const ethDecimals = 18;
 
+const InfoBox = ({children, ...props}) => (
+  <div className="p-3 border-2 border-pink-300 rounded-xl text-center" {...props}> {children}</div>
+)
+
 const Pool = () => {
   const { active, chainId, account, error, library } = useWeb3React();
+  const [errMessage, setErrMessage] = useState(undefined)
+  const [loading, setLoading] = useState(false)
+
+  //   Ropsten
+  const cToken = active && new library.eth.Contract(cETH_ABI, '0x859e9d8a4edadfedb5a2ff311243af80f85a91b8');
+
+  //   Rinkeby
+  // const cETH = new library.eth.Contract(cETH_ABI, '0xd6801a1dffcd0a410336ef88def4320d6df1883e');
+
   const [userSupplied, setUserSupplied] = useState()
   const [totalSupplied, setTotalSupplied] = useState()
   const [apy, setApy] = useState()
+  
   const [cEthBalance, setCEthBalance] = useState()
   const [cEthExchangeRate, setCEthExchangeRate] = useState()
 
+  // supply
+  const [ethBalance, setEthBalance] = useState()
+  const [inputSupplyAmount, setInputSupplyAmount] = useState('')
+  // withdraw
+  const [inputWithdrawAmount, setInputWithdrawAmount] = useState('')
 
-  const [myBalance, setMyBalance] = useState()
-  
   useEffect(() => {
     if (active) {
       const init = async () => {
-        //   Ropsten
-        const cToken = new library.eth.Contract(cETH_ABI, '0x859e9d8a4edadfedb5a2ff311243af80f85a91b8');
 
-        //   Rinkeby
-        // const cETH = new library.eth.Contract(cETH_ABI, '0xd6801a1dffcd0a410336ef88def4320d6df1883e');
-
-        // TODO fix this
         const totalSupplyValue = await cToken.methods.totalSupply().call()
         setTotalSupplied(web3.utils.fromWei(totalSupplyValue, 'ether'))
 
@@ -56,8 +68,8 @@ const Pool = () => {
         setApy(supplyApy)
 
         // get balance
-        let ethBalance = await library.eth.getBalance(account) / Math.pow(10, ethDecimals);
-        setMyBalance(ethBalance)
+        let ethTokenBalance = await library.eth.getBalance(account) / Math.pow(10, ethDecimals);
+        setEthBalance(ethTokenBalance)
 
 
       }
@@ -65,31 +77,95 @@ const Pool = () => {
     }
   }, [active])
 
-  const handleOnSupply = async () => {
-    //     // Mint some cETH by supplying ETH to the Compound Protocol
-    //     await cEthContract.methods.mint().send({
-    //     from: myWalletAddress,
-    //     gasLimit: web3.utils.toHex(250000),
-    //     gasPrice: web3.utils.toHex(20000000000), // use ethgasstation.info (mainnet only)
-    //     value: web3.utils.toHex(web3.utils.toWei('1', 'ether'))
-    // });
+  const handleOnChangeSupplyInput = (e) => {
+    setInputSupplyAmount(e.target.value)
+  }
+  const handleOnChangeWithdrawInput = (e) => {
+    setInputWithdrawAmount(e.target.value)
+  }
+
+  const handleOnSupply = async () => {  
+    if (inputSupplyAmount > ethBalance) {
+      alert('Not sufficient')
+      setInputSupplyAmount('')
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      const receipt = await cToken.methods.mint().send({
+        from: account,
+        value: web3.utils.toHex(web3.utils.toWei(inputSupplyAmount, 'ether'))
+      });
+
+      if (receipt) {
+        console.log("🚀 ~ file: Pool.js ~ line 100 ~ handleOnSupply ~ receipt", receipt)
+        setLoading(false)
+        alert('Transaction was submitted')
+      }
+    } catch (e) {
+      console.error(e)
+      setErrMessage(e)
+    }
+  }
+
+  const handleOnWithdraw = async () => {
+    if (inputWithdrawAmount > cEthBalance) {
+      alert('Not sufficient')
+      setInputWithdrawAmount('')
+      return
+    }
+    try {
+      setLoading(true)
+
+      const receipt =await cToken.methods.redeem(inputWithdrawAmount * 1e8).send({
+        from: account,
+      })
+
+      if (receipt) {
+        console.log("🚀 ~ file: Pool.js ~ line 127 ~ handleOnWithdraw ~ receipt", receipt)
+        setLoading(false)
+        alert('Transaction was submitted')
+      }
+    } catch (e) {
+      console.error(e)
+      setErrMessage(e)
+    }
+
+    
   }
 
   return (
     <>
+    {errMessage && <span>Error: {errMessage?.toString()}</span>}
+    <div>loading: {loading ? 'true' : 'false'}</div>
     {active && 
         <>
-            <div className="wallet-info">
-                <p cal>Your Supplied: {userSupplied} ETH</p>
-                <p>Total Supplied: {totalSupplied} ETH</p>
-                <p>APY: {apy} %</p>
+            <div className="grid grid-cols-3 gap-x-9">
+                <InfoBox>Your Supplied: {userSupplied} ETH</InfoBox>
+                <InfoBox>Total Supplied: {totalSupplied} ETH</InfoBox>
+                <InfoBox>APY: {apy} %</InfoBox>
             </div>
             <div className="wallet-info">
-                <p>Balance: {myBalance} ETH</p>
-                <p>---------------------------------------</p>
                 <p>cEthBalance: {cEthBalance}</p>
                 <p>cEthExchangeRate: {cEthExchangeRate}</p>
             </div>
+            <div className='flex flex-col'>
+              <h1>Supply</h1>
+              <p>Balance: {ethBalance} ETH</p>
+              <input type="number" className='w-half px-2 pb-1.5 text-primary text-base font-light rounded-md border-2 border-pink-300' onChange={handleOnChangeSupplyInput} value={inputSupplyAmount} />
+              <p>Receiving: {inputSupplyAmount / cEthExchangeRate} cETH</p>
+              <button onClick={handleOnSupply}>Supply</button>
+            </div>
+            <div className='flex flex-col'>
+              <h1>Withdraw</h1>
+              <p>Balance: {cEthBalance} cETH</p>
+              <input type="number" className='w-half px-2 pb-1.5 text-primary text-base font-light rounded-md border-2 border-pink-300' onChange={handleOnChangeWithdrawInput} value={inputWithdrawAmount} />
+              <p>Receiving: {inputWithdrawAmount * cEthExchangeRate} ETH</p>
+              <button onClick={handleOnWithdraw}>Withdraw</button>
+            </div>
+
         </>
     
     }
