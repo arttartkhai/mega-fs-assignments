@@ -1,9 +1,7 @@
 import { useWeb3React } from '@web3-react/core';
 import { useEffect, useState } from 'react';
-import Input from './Input'
 // TODO: use Rinkeby
 import cETH_ABI from  '../constant/ABI/cETH-Ropsten.json'
-import web3 from 'web3'
 
 const ethDecimals = 18;
 
@@ -12,15 +10,11 @@ const InfoBox = ({children, ...props}) => (
 )
 
 const Pool = () => {
-  const { active, account, error, library } = useWeb3React();
-  const [errMessage, setErrMessage] = useState(undefined)
+  const { active, account, error, library: web3 } = useWeb3React();
+  const [cToken, setCToken] = useState(undefined)
+  const [errMessage, setErrMessage] = useState('')
   const [loading, setLoading] = useState(false)
 
-  //   Ropsten
-  const cToken = active && new library.eth.Contract(cETH_ABI, '0x859e9d8a4edadfedb5a2ff311243af80f85a91b8');
-
-  //   Rinkeby
-  // const cETH = new library.eth.Contract(cETH_ABI, '0xd6801a1dffcd0a410336ef88def4320d6df1883e');
 
   const [userSupplied, setUserSupplied] = useState()
   const [totalSupplied, setTotalSupplied] = useState()
@@ -39,10 +33,26 @@ const Pool = () => {
     if (active) {
       const init = async () => {
 
+        //   Ropsten
+        const cTokenContract = new web3.eth.Contract(cETH_ABI, '0x859e9d8a4edadfedb5a2ff311243af80f85a91b8');
+        //   Rinkeby
+        // const cTokenContract = new web3.eth.Contract(cETH_ABI, '0xd6801a1dffcd0a410336ef88def4320d6df1883e');
+
+        setCToken(cTokenContract)
+
+        // TODO: add event listener for update data
+      }
+      init()
+    }
+  }, [active])
+
+  useEffect(() => {
+    if (cToken) {
+      const fetchData = async () => {
         // TODO research again what is total supply
-        const contractBalance = await library.eth.getBalance("0x859e9d8a4edadfedb5a2ff311243af80f85a91b8")
+        const contractBalance = await web3.eth.getBalance("0x859e9d8a4edadfedb5a2ff311243af80f85a91b8")
         // TODO use Rinkeby !!!!!!!!!!!!
-        // const contractBalance = await library.eth.getBalance("0xd6801a1dffcd0a410336ef88def4320d6df1883e")
+        // const contractBalance = await web3.eth.getBalance("0xd6801a1dffcd0a410336ef88def4320d6df1883e")
         setTotalSupplied(web3.utils.fromWei(contractBalance, 'ether'))
 
         /* get supplied */
@@ -71,14 +81,13 @@ const Pool = () => {
         setApy(supplyApy)
 
         // get balance
-        let ethTokenBalance = await library.eth.getBalance(account) / Math.pow(10, ethDecimals);
+        let ethTokenBalance = await web3.eth.getBalance(account) / Math.pow(10, ethDecimals);
         setEthBalance(ethTokenBalance)
-
-
       }
-      init()
+
+      fetchData()
     }
-  }, [active])
+  }, [cToken])
 
   const handleOnChangeSupplyInput = (e) => {
     setInputSupplyAmount(e.target.value)
@@ -93,7 +102,6 @@ const Pool = () => {
       setInputSupplyAmount('')
       return
     }
-
     try {
       setLoading(true)
 
@@ -140,7 +148,6 @@ const Pool = () => {
   const handleOnClickMaxSupply = () => {
     setInputSupplyAmount(ethBalance)
   }
-
   const handleOnClickMaxWithdraw = () => {
     setInputWithdrawAmount(cEthBalance)
   }
@@ -157,7 +164,6 @@ const Pool = () => {
                 <InfoBox>APY: {apy} %</InfoBox>
             </div>
             <div className="wallet-info">
-                <p>cEthBalance: {cEthBalance}</p>
                 <p>cEthExchangeRate: {cEthExchangeRate}</p>
             </div>
             <div className='flex flex-col'>
@@ -176,11 +182,8 @@ const Pool = () => {
               <p>Receiving: {inputWithdrawAmount * cEthExchangeRate} ETH</p>
               <button onClick={handleOnWithdraw}>Withdraw</button>
             </div>
-
         </>
-    
     }
-
     </>
   );
 };
