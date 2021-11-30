@@ -1,7 +1,8 @@
 import { useWeb3React } from '@web3-react/core';
 import { useEffect, useState } from 'react';
-// TODO: use Rinkeby
-import cETH_ABI from '../constant/ABI/cETH-Ropsten.json';
+import cETH_ABI_Ropsten from '../../constant/ABI/cETH-Ropsten.json';
+import cETH_ABI_Rinkeby from '../../constant/ABI/cETH-Rinkeby.json';
+import FormCard from './FormCard';
 
 const ethDecimals = 18;
 
@@ -45,7 +46,7 @@ const Pool = () => {
           // Rinkeby
           if (chainId === 4) {
             cTokenContract = new web3.eth.Contract(
-              cETH_ABI,
+              cETH_ABI_Rinkeby,
               '0xd6801a1dffcd0a410336ef88def4320d6df1883e'
             );
             contractBalance = await web3.eth.getBalance(
@@ -56,7 +57,7 @@ const Pool = () => {
           // Ropsten
           else if (chainId === 3) {
             cTokenContract = new web3.eth.Contract(
-              cETH_ABI,
+              cETH_ABI_Ropsten,
               '0x859e9d8a4edadfedb5a2ff311243af80f85a91b8'
             );
             contractBalance = await web3.eth.getBalance(
@@ -146,10 +147,6 @@ const Pool = () => {
       });
 
       if (receipt) {
-        console.log(
-          '🚀 ~ file: Pool.js ~ line 100 ~ handleOnSupply ~ receipt',
-          receipt
-        );
         setLoading(false);
         alert('Transaction was submitted');
       }
@@ -175,10 +172,6 @@ const Pool = () => {
         });
 
       if (receipt) {
-        console.log(
-          '🚀 ~ file: Pool.js ~ line 127 ~ handleOnWithdraw ~ receipt',
-          receipt
-        );
         setLoading(false);
         alert('Transaction was submitted');
       }
@@ -199,6 +192,9 @@ const Pool = () => {
     <>
       {errMessage && <span>Error: {errMessage?.toString()}</span>}
       <div>loading: {loading ? 'true' : 'false'}</div>
+      
+      <FormCard/>
+
       {active && !errMessage && (
         <>
           <div className="grid grid-cols-3 gap-x-9">
