@@ -34,15 +34,35 @@ const ConnectWallet = () => {
   }, [active]);
 
   return (
-    <div className="connect-wallet">
+    <>
       {active && (
-        <button className="button-disconnect" onClick={handleDisconnect}>
-          Disconnect Wallet
-        </button>
+        // <button className="button-disconnect" onClick={handleDisconnect}>
+        //   Disconnect Wallet
+        // </button>
+        <div className="flex w-full justify-end">
+          <button
+            data-modal-toggle="example"
+            data-modal-action="open"
+            class="bg-red-600 font-semibold text-white p-3 rounded-full hover:bg-red-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
+            onClick={handleDisconnect}
+          >
+            Disconnect Wallet
+          </button>
+        </div>
       )}
       {!active && (
-        <>
-          <button onClick={handleClick('MetaMask')} disabled={isConnecing}>
+        <div className="flex w-full justify-center">
+          <button
+            data-modal-toggle="example"
+            data-modal-action="open"
+            class="bg-green-500 font-semibold text-white p-3 rounded-full hover:bg-green-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
+            onClick={handleClick('MetaMask')}
+            disabled={isConnecing}
+          >
+            Connect on MetaMask
+          </button>
+
+          {/* <button onClick={handleClick('MetaMask')} disabled={isConnecing}>
             Connect on MetaMask
           </button>
           <button onClick={handleClick('Portis')} disabled={isConnecing}>
@@ -53,11 +73,11 @@ const ConnectWallet = () => {
           </button>
           <button onClick={handleClick('WalletLink')} disabled={isConnecing}>
             Connect on WalletLink
-          </button>
-        </>
+          </button> */}
+        </div>
       )}
       {!active && error && <button onClick={handleRetry}>Retry</button>}
-    </div>
+    </>
   );
 };
 

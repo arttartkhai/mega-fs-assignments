@@ -25,13 +25,7 @@ const ProcessingButton = () => (
 );
 
 const FormCard = ({ isLoading, data, getReceiving, submitTx, ...rest }) => {
-  const { title, balance, balanceUnit, receivingUnit } = data;
-  //   const title = 'Supply';
-  //   const balance = 12312312313;
-  //   const balanceUnit = 'ETH';
-  //   const receiving = 1234;
-  //   const receivingUnit = 'cETH';
-  //   let isLoading = false;
+  const { title, balance, balanceUnit, receivingUnit, logoClassName } = data;
 
   const [amountValue, setAmountValue] = useState('');
   const [receivingAmount, setReceivingAmount] = useState(0);
@@ -59,7 +53,7 @@ const FormCard = ({ isLoading, data, getReceiving, submitTx, ...rest }) => {
   return (
     <>
       <div
-        className="flex flex-col w-2/4 bg-white shadow-md px-4 sm:px-6 md:px-8 lg:px-10 py-8 rounded-3xl w-50 max-w-md"
+        className="flex flex-col bg-white shadow-md px-4 sm:px-6 md:px-8 lg:px-10 py-8 rounded-3xl w-50 max-w-md"
         {...rest}
       >
         <div className="font-medium self-center text-xl sm:text-3xl text-gray-800">
@@ -76,14 +70,11 @@ const FormCard = ({ isLoading, data, getReceiving, submitTx, ...rest }) => {
             >
               Max
             </div>
-            <div className="relative">
-              <div className=" inline-flex items-center justify-center absolute left-0 top-0 h-full w-10 text-gray-400 ">
-                {/* TODO: put ETH LOGO */}
-                <i className="fas fa-at text-blue-500"></i>
-              </div>
+            <div className="flex items-center justify-center">
+              <span className={`w-1/4 ${logoClassName}`}/>
               <input
                 type="number"
-                className="w-full px-2 pb-1.5 text-primary text-base text-right font-light rounded-md border-2 border-pink-300"
+                className="w-3/4 px-2 pb-1.5 text-primary text-base text-right font-light rounded-md border-2 border-pink-300"
                 placeholder={`0 ${balanceUnit}`}
                 value={amountValue}
                 onChange={handleOnChange}

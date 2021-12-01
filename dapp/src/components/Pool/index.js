@@ -5,6 +5,9 @@ import cETH_ABI_Rinkeby from '../../constant/ABI/cETH-Rinkeby.json';
 import FormCard from './FormCard';
 import SETTING from '../../constant/setting';
 import { formatNumber } from '../../utils/present';
+import { SUPPLIER } from '../../constant/type';
+import ModeSelector from './ModeSelector';
+import Alert from './Alert';
 
 const ethDecimals = 18;
 
@@ -23,6 +26,7 @@ const Pool = () => {
   const [cToken, setCToken] = useState(undefined);
   const [errMessage, setErrMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [mode, setMode] = useState(SUPPLIER.SUPPLY);
 
   const [userSupplied, setUserSupplied] = useState();
   const [totalSupplied, setTotalSupplied] = useState();
@@ -36,7 +40,10 @@ const Pool = () => {
 
   useEffect(() => {
     if (active) {
+      // clear previous state every time when reconnect wallet
       setErrMessage('');
+      setIsLoading(false);
+
       const init = async () => {
         try {
           let cTokenContract;
@@ -67,8 +74,13 @@ const Pool = () => {
           }
 
           setCToken(cTokenContract);
-          const contractBalanceInEth = web3.utils.fromWei(contractBalance, 'ether')
-          setTotalSupplied(formatNumber(contractBalanceInEth));
+          const contractBalanceInEth = web3.utils.fromWei(
+            contractBalance,
+            'ether'
+          );
+          setTotalSupplied(
+            formatNumber(contractBalanceInEth, SETTING.ui.decimal.totalSupplied)
+          );
           // TODO: add event listener for update data
         } catch (e) {
           console.error(e);
@@ -147,7 +159,7 @@ const Pool = () => {
       }
     } catch (e) {
       console.error(e);
-      setErrMessage(e);
+      setErrMessage(e?.message);
     }
   };
 
@@ -169,16 +181,20 @@ const Pool = () => {
       }
     } catch (e) {
       console.error(e);
-      setErrMessage(e);
+      setErrMessage(e?.message);
     }
   };
 
   const calReceivingSupply = (amount) => amount / cEthExchangeRate;
   const calReceivingWithdraw = (amount) => amount * cEthExchangeRate;
 
+  const switchModeTo = (modeType) => {
+    setMode(modeType);
+  };
+
   return (
     <>
-      {errMessage && <span>Error: {errMessage?.toString()}</span>}
+      {errMessage && <Alert message={errMessage?.toString()} />}
 
       {active && !errMessage && (
         <>
@@ -187,31 +203,41 @@ const Pool = () => {
             <InfoBox>Total Supplied: {totalSupplied} ETH</InfoBox>
             <InfoBox>APY: {apy} %</InfoBox>
           </div>
-          <div className="wallet-info">
-            <p>cEthExchangeRate: {cEthExchangeRate}</p>
+          <div className="grid grid-cols-4">
+            <div className="col-span-1">
+              <ModeSelector mode={mode} switchModeTo={switchModeTo} />
+            </div>
+            <div className="col-span-3 justify-self-center">
+              {mode === SUPPLIER.SUPPLY && (
+                <FormCard
+                  isLoading={isLoading}
+                  data={{
+                    title: 'Supply',
+                    balance: ethBalance,
+                    balanceUnit: 'ETH',
+                    receivingUnit: 'cETH',
+                    logoClassName: 'eth-logo',
+                  }}
+                  getReceiving={calReceivingSupply}
+                  submitTx={sendSupplyTx}
+                />
+              )}
+              {mode === SUPPLIER.WITHDRAW && (
+                <FormCard
+                  isLoading={isLoading}
+                  data={{
+                    title: 'Withdraw',
+                    balance: cEthBalance,
+                    balanceUnit: 'cETH',
+                    receivingUnit: 'ETH',
+                    logoClassName: 'cEth-logo',
+                  }}
+                  getReceiving={calReceivingWithdraw}
+                  submitTx={sendWithdrawTx}
+                />
+              )}
+            </div>
           </div>
-          <FormCard
-            isLoading={isLoading}
-            data={{
-              title: 'Supply',
-              balance: ethBalance,
-              balanceUnit: 'ETH',
-              receivingUnit: 'cETH',
-            }}
-            getReceiving={calReceivingSupply}
-            submitTx={sendSupplyTx}
-          />
-          <FormCard
-            isLoading={isLoading}
-            data={{
-              title: 'Withdraw',
-              balance: cEthBalance,
-              balanceUnit: 'cETH',
-              receivingUnit: 'ETH',
-            }}
-            getReceiving={calReceivingWithdraw}
-            submitTx={sendWithdrawTx}
-          />
         </>
       )}
     </>
