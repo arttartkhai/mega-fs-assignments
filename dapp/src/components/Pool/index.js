@@ -9,7 +9,7 @@ import {
 import FormCard from './FormCard';
 import SETTING from '../../constant/setting';
 import { formatNumber } from '../../utils/present';
-import { SUPPLIER } from '../../constant/type';
+import { SUPPLIER, MODAL } from '../../constant/type';
 import ModeSelector from './ModeSelector';
 import Alert from '../Alert';
 
@@ -25,7 +25,7 @@ const InfoBox = ({ children, ...props }) => (
   </div>
 );
 
-const Pool = () => {
+const Pool = ({ openPopup, ...rest }) => {
   const { active, account, chainId, error, library: web3 } = useWeb3React();
   const [cToken, setCToken] = useState(undefined);
   const [errMessage, setErrMessage] = useState('');
@@ -135,7 +135,7 @@ const Pool = () => {
 
   const sendSupplyTx = async (amount) => {
     if (amount > ethBalance && amount > 0) {
-      alert('Not sufficient');
+      openPopup({ type: MODAL.FAILED, message: 'Not sufficient' });
       return;
     }
 
@@ -149,8 +149,12 @@ const Pool = () => {
 
       if (receipt) {
         setIsLoading(false);
-        alert('Transaction was submitted');
-        fetchData()
+        openPopup({
+          type: MODAL.SUCCESS,
+          message: 'Transaction was submitted',
+        });
+
+        fetchData();
       }
     } catch (e) {
       console.error(e);
@@ -160,7 +164,7 @@ const Pool = () => {
 
   const sendWithdrawTx = async (amount) => {
     if (amount > cEthBalance && amount > 0) {
-      alert('Not sufficient');
+      openPopup({ type: MODAL.FAILED, message: 'Not sufficient' });
       return;
     }
     try {
@@ -172,8 +176,11 @@ const Pool = () => {
 
       if (receipt) {
         setIsLoading(false);
-        alert('Transaction was submitted');
-        fetchData()
+        openPopup({
+          type: MODAL.SUCCESS,
+          message: 'Transaction was submitted',
+        });
+        fetchData();
       }
     } catch (e) {
       console.error(e);
