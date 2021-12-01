@@ -1,33 +1,35 @@
 import { SUPPLIER } from '../../constant/type';
 
 const ModeSelector = ({ mode, switchModeTo }) => {
+  const isSelectingSupply = mode === SUPPLIER.SUPPLY;
+  const isSelectingWithdraw = mode === SUPPLIER.WITHDRAW;
   return (
     <div className="flex flex-col">
       <button
-        className={`relative  text-white p-5 w-52 rounded-2xl text-2xl font-medium overflow-hidden bg-blue-${
-          mode === SUPPLIER.SUPPLY ? '500' : '300'
+        className={`relative  text-white p-5 w-52 rounded-2xl text-2xl font-medium overflow-hidden bg-blue-500 ${
+          isSelectingWithdraw && 'opacity-50'
         }`}
         onClick={() => switchModeTo(SUPPLIER.SUPPLY)}
       >
         Supply
         <div
-          className={`ribbon text-sm whitespace-no-wrap px-4 bg-pink-${
-            mode === SUPPLIER.SUPPLY ? '500' : '300'
+          className={`ribbon text-sm whitespace-no-wrap px-4 bg-pink-500 ${
+            isSelectingWithdraw && 'opacity-50'
           }`}
         >
           Beta
         </div>
       </button>
       <button
-        className={`mt-3 relative  text-white p-5 w-52 rounded-2xl text-2xl font-medium overflow-hidden bg-blue-${
-          mode === SUPPLIER.WITHDRAW ? '500' : '300'
+        className={`mt-3 relative  text-white p-5 w-52 rounded-2xl text-2xl font-medium overflow-hidden bg-blue-500 ${
+          isSelectingSupply && 'opacity-50'
         }`}
         onClick={() => switchModeTo(SUPPLIER.WITHDRAW)}
       >
         Withdraw
         <div
-          className={`ribbon text-sm whitespace-no-wrap px-4 bg-pink-${
-            mode === SUPPLIER.WITHDRAW ? '500' : '300'
+          className={`ribbon text-sm whitespace-no-wrap px-4 bg-pink-500 ${
+            isSelectingSupply && 'opacity-50'
           }`}
         >
           Beta
