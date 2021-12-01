@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { formatNumber } from '../../utils/present';
 
 const ProcessingButton = () => (
   <button
@@ -67,7 +68,7 @@ const FormCard = ({ isLoading, data, getReceiving, submitTx, ...rest }) => {
         <div className="mt-10 ">
           <div className="flex flex-col mb-5">
             <div className="mb-1 text-xs text-right tracking-wide text-gray-600">
-              Balance: {balance} {balanceUnit}
+              Balance: {formatNumber(balance)} {balanceUnit}
             </div>
             <div
               className="self-end text-sm text-blue-400 underline cursor-pointer"
@@ -92,7 +93,7 @@ const FormCard = ({ isLoading, data, getReceiving, submitTx, ...rest }) => {
           <div className="flex justify-between text-xs text-gray-600">
             <span>Receiving</span>
             <span>
-              {receivingAmount} {receivingUnit}
+              {formatNumber(receivingAmount)} {receivingUnit}
             </span>
           </div>
           <div className="mt-5 flex w-full">

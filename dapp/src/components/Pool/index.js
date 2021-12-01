@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import cETH_ABI_Ropsten from '../../constant/ABI/cETH-Ropsten.json';
 import cETH_ABI_Rinkeby from '../../constant/ABI/cETH-Rinkeby.json';
 import FormCard from './FormCard';
+import SETTING from '../../constant/setting';
+import { formatNumber } from '../../utils/present';
 
 const ethDecimals = 18;
 
@@ -65,7 +67,8 @@ const Pool = () => {
           }
 
           setCToken(cTokenContract);
-          setTotalSupplied(web3.utils.fromWei(contractBalance, 'ether'));
+          const contractBalanceInEth = web3.utils.fromWei(contractBalance, 'ether')
+          setTotalSupplied(formatNumber(contractBalanceInEth));
           // TODO: add event listener for update data
         } catch (e) {
           console.error(e);
@@ -84,7 +87,7 @@ const Pool = () => {
           web3.utils.toBN(
             await cToken.methods.balanceOfUnderlying(account).call()
           ) / Math.pow(10, ethDecimals);
-        setUserSupplied(balanceOfUnderlying);
+        setUserSupplied(formatNumber(balanceOfUnderlying));
 
         const cTokenBalance =
           (await cToken.methods.balanceOf(account).call()) / 1e8;
@@ -111,7 +114,7 @@ const Pool = () => {
           ) -
             1) *
           100;
-        setApy(supplyApy);
+        setApy(formatNumber(supplyApy, SETTING.ui.decimal.apy));
 
         // get balance
         const ethTokenBalance =
@@ -177,7 +180,7 @@ const Pool = () => {
     <>
       {errMessage && <span>Error: {errMessage?.toString()}</span>}
 
-      {active && (
+      {active && !errMessage && (
         <>
           <div className="grid grid-cols-3 gap-x-9">
             <InfoBox>Your Supplied: {userSupplied} ETH</InfoBox>
