@@ -1,7 +1,11 @@
 import { useWeb3React } from '@web3-react/core';
 import { useEffect, useState } from 'react';
-import cETH_ABI_Ropsten from '../../constant/ABI/cETH-Ropsten.json';
-import cETH_ABI_Rinkeby from '../../constant/ABI/cETH-Rinkeby.json';
+import cETH_ABI_Ropsten from '../../contract/ABI/cETH-Ropsten.json';
+import cETH_ABI_Rinkeby from '../../contract/ABI/cETH-Rinkeby.json';
+import {
+  rinkeby as rinkebyContract,
+  ropsten as ropstenContact,
+} from '../../contract/address';
 import FormCard from './FormCard';
 import SETTING from '../../constant/setting';
 import { formatNumber } from '../../utils/present';
@@ -53,22 +57,18 @@ const Pool = () => {
           if (chainId === 4) {
             cTokenContract = new web3.eth.Contract(
               cETH_ABI_Rinkeby,
-              '0xd6801a1dffcd0a410336ef88def4320d6df1883e'
+              rinkebyContract.cEth
             );
-            contractBalance = await web3.eth.getBalance(
-              '0xd6801a1dffcd0a410336ef88def4320d6df1883e'
-            );
+            contractBalance = await web3.eth.getBalance(rinkebyContract.cEth);
           }
 
           // Ropsten
           else if (chainId === 3) {
             cTokenContract = new web3.eth.Contract(
               cETH_ABI_Ropsten,
-              '0x859e9d8a4edadfedb5a2ff311243af80f85a91b8'
+              ropstenContact.cEth
             );
-            contractBalance = await web3.eth.getBalance(
-              '0x859e9d8a4edadfedb5a2ff311243af80f85a91b8'
-            );
+            contractBalance = await web3.eth.getBalance(ropstenContact.cEth);
           } else {
             throw new Error('not support chain');
           }
@@ -84,7 +84,7 @@ const Pool = () => {
           // TODO: add event listener for update data
         } catch (e) {
           console.error(e);
-          setErrMessage('Please change to Rinkeby network');
+          setErrMessage('Please change to Rinkeby network or Ropsten network');
         }
       };
       init();
