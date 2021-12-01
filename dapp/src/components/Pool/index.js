@@ -12,18 +12,9 @@ import { formatNumber } from '../../utils/present';
 import { SUPPLIER, MODAL } from '../../constant/type';
 import ModeSelector from './ModeSelector';
 import Alert from '../Alert';
+import InfoBox from './InfoBox';
 
-const ethDecimals = 18;
-
-const InfoBox = ({ children, ...props }) => (
-  <div
-    className="p-3 border-2 border-pink-300 rounded-xl text-center"
-    {...props}
-  >
-    {' '}
-    {children}
-  </div>
-);
+const ETH_DECIMAL = 18;
 
 const Pool = ({ openPopup, ...rest }) => {
   const { active, account, chainId, error, library: web3 } = useWeb3React();
@@ -95,7 +86,7 @@ const Pool = ({ openPopup, ...rest }) => {
     const balanceOfUnderlying =
       web3.utils.toBN(
         await cToken.methods.balanceOfUnderlying(account).call()
-      ) / Math.pow(10, ethDecimals);
+      ) / Math.pow(10, ETH_DECIMAL);
     setUserSupplied(formatNumber(balanceOfUnderlying));
 
     const cTokenBalance =
@@ -104,7 +95,7 @@ const Pool = ({ openPopup, ...rest }) => {
 
     let exchangeRateCurrent = await cToken.methods.exchangeRateCurrent().call();
     exchangeRateCurrent =
-      exchangeRateCurrent / Math.pow(10, 18 + ethDecimals - 8);
+      exchangeRateCurrent / Math.pow(10, 18 + ETH_DECIMAL - 8);
     setCEthExchangeRate(exchangeRateCurrent);
 
     /* calculate APY */
@@ -123,7 +114,7 @@ const Pool = ({ openPopup, ...rest }) => {
 
     // get balance
     const ethTokenBalance =
-      (await web3.eth.getBalance(account)) / Math.pow(10, ethDecimals);
+      (await web3.eth.getBalance(account)) / Math.pow(10, ETH_DECIMAL);
     setEthBalance(ethTokenBalance);
   }, [cToken]);
 
@@ -202,9 +193,12 @@ const Pool = ({ openPopup, ...rest }) => {
       {active && !errMessage && (
         <>
           <div className="grid grid-cols-3 gap-x-9">
-            <InfoBox>{`Your Supplied: ${userSupplied} ETH (${cEthBalance} cETH)`}</InfoBox>
-            <InfoBox>{`Total Supplied: ${totalSupplied} ETH`}</InfoBox>
-            <InfoBox>{`APY: ${apy} %`}</InfoBox>
+            <InfoBox
+              title={'Your Supplied'}
+              data={`${userSupplied} ETH (${cEthBalance} cETH)`}
+            />
+            <InfoBox title={'Total Supplied'} data={`${totalSupplied} ETH`} />
+            <InfoBox title={'APY'} data={`${apy} %`} />
           </div>
           <div className="flex">
             <ModeSelector mode={mode} switchModeTo={switchModeTo} />

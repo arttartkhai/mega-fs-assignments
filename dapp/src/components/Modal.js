@@ -6,7 +6,7 @@ const Modal = ({ payload, closePopup }) => {
   const isSuccessType = type === MODAL.SUCCESS;
 
   return (
-    <div class="flex flex-col space-y-4 min-w-screen h-screen animated fadeIn faster  fixed  left-0 top-0 flex justify-center items-center inset-0 z-50 outline-none focus:outline-none bg-gray-900">
+    <div class="flex flex-col space-y-4 min-w-screen h-screen animated fadeIn faster  fixed  left-0 top-0 justify-center items-center inset-0 z-50 outline-none focus:outline-none bg-gray-900">
       <div class="shadow-lg rounded-2xl p-4 bg-white dark:bg-gray-800 w-64 m-auto">
         <div class="w-full h-full text-center">
           <div class="flex h-full flex-col justify-between">
