@@ -20,7 +20,7 @@ const Pool = () => {
   const { active, account, chainId, error, library: web3 } = useWeb3React();
   const [cToken, setCToken] = useState(undefined);
   const [errMessage, setErrMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [userSupplied, setUserSupplied] = useState();
   const [totalSupplied, setTotalSupplied] = useState();
@@ -31,18 +31,15 @@ const Pool = () => {
 
   // supply
   const [ethBalance, setEthBalance] = useState();
-  const [inputSupplyAmount, setInputSupplyAmount] = useState('');
-  // withdraw
-  const [inputWithdrawAmount, setInputWithdrawAmount] = useState('');
 
   useEffect(() => {
     if (active) {
-      setErrMessage('')
+      setErrMessage('');
       const init = async () => {
         try {
           let cTokenContract;
           let contractBalance;
-
+          // TODO move contract address to constant
           // Rinkeby
           if (chainId === 4) {
             cTokenContract = new web3.eth.Contract(
@@ -125,29 +122,24 @@ const Pool = () => {
     }
   }, [cToken]);
 
-  const handleOnChangeSupplyInput = (e) => {
-    setInputSupplyAmount(e.target.value);
-  };
-  const handleOnChangeWithdrawInput = (e) => {
-    setInputWithdrawAmount(e.target.value);
-  };
-
-  const handleOnSupply = async () => {
-    if (inputSupplyAmount > ethBalance) {
+  const sendSupplyTx = async (amount) => {
+    if (amount > ethBalance && amount > 0) {
       alert('Not sufficient');
-      setInputSupplyAmount('');
       return;
     }
+
     try {
-      setLoading(true);
+      setIsLoading(true);
 
       const receipt = await cToken.methods.mint().send({
         from: account,
-        value: web3.utils.toHex(web3.utils.toWei(inputSupplyAmount, 'ether')),
+        value: web3.utils.toHex(web3.utils.toWei(amount?.toString(), 'ether')),
       });
+      // TODO: handle when click reject -> should not show loading
 
       if (receipt) {
-        setLoading(false);
+        setIsLoading(false);
+
         alert('Transaction was submitted');
       }
     } catch (e) {
@@ -156,23 +148,20 @@ const Pool = () => {
     }
   };
 
-  const handleOnWithdraw = async () => {
-    if (inputWithdrawAmount > cEthBalance) {
+  const sendWithdrawTx = async (amount) => {
+    if (amount > cEthBalance && amount > 0) {
       alert('Not sufficient');
-      setInputWithdrawAmount('');
       return;
     }
     try {
-      setLoading(true);
+      setIsLoading(true);
 
-      const receipt = await cToken.methods
-        .redeem(inputWithdrawAmount * 1e8)
-        .send({
-          from: account,
-        });
+      const receipt = await cToken.methods.redeem(amount * 1e8).send({
+        from: account,
+      });
 
       if (receipt) {
-        setLoading(false);
+        setIsLoading(false);
         alert('Transaction was submitted');
       }
     } catch (e) {
@@ -181,21 +170,14 @@ const Pool = () => {
     }
   };
 
-  const handleOnClickMaxSupply = () => {
-    setInputSupplyAmount(ethBalance);
-  };
-  const handleOnClickMaxWithdraw = () => {
-    setInputWithdrawAmount(cEthBalance);
-  };
+  const calReceivingSupply = (amount) => amount / cEthExchangeRate;
+  const calReceivingWithdraw = (amount) => amount * cEthExchangeRate;
 
   return (
     <>
       {errMessage && <span>Error: {errMessage?.toString()}</span>}
-      <div>loading: {loading ? 'true' : 'false'}</div>
-      
-      <FormCard/>
 
-      {active && !errMessage && (
+      {active && (
         <>
           <div className="grid grid-cols-3 gap-x-9">
             <InfoBox>Your Supplied: {userSupplied} ETH</InfoBox>
@@ -205,42 +187,28 @@ const Pool = () => {
           <div className="wallet-info">
             <p>cEthExchangeRate: {cEthExchangeRate}</p>
           </div>
-          <div className="flex flex-col">
-            <h1>Supply</h1>
-            <p>Balance: {ethBalance} ETH</p>
-            <span
-              className="self-end text-md text-blue-400 underline cursor-pointer"
-              onClick={handleOnClickMaxSupply}
-            >
-              Max
-            </span>
-            <input
-              type="number"
-              className="w-half px-2 pb-1.5 text-primary text-base font-light rounded-md border-2 border-pink-300"
-              onChange={handleOnChangeSupplyInput}
-              value={inputSupplyAmount}
-            />
-            <p>Receiving: {inputSupplyAmount / cEthExchangeRate} cETH</p>
-            <button onClick={handleOnSupply}>Supply</button>
-          </div>
-          <div className="flex flex-col">
-            <h1>Withdraw</h1>
-            <p>Balance: {cEthBalance} cETH</p>
-            <span
-              className="self-end text-md text-blue-400 underline cursor-pointer"
-              onClick={handleOnClickMaxWithdraw}
-            >
-              Max
-            </span>
-            <input
-              type="number"
-              className="w-half px-2 pb-1.5 text-primary text-base font-light rounded-md border-2 border-pink-300"
-              onChange={handleOnChangeWithdrawInput}
-              value={inputWithdrawAmount}
-            />
-            <p>Receiving: {inputWithdrawAmount * cEthExchangeRate} ETH</p>
-            <button onClick={handleOnWithdraw}>Withdraw</button>
-          </div>
+          <FormCard
+            isLoading={isLoading}
+            data={{
+              title: 'Supply',
+              balance: ethBalance,
+              balanceUnit: 'ETH',
+              receivingUnit: 'cETH',
+            }}
+            getReceiving={calReceivingSupply}
+            submitTx={sendSupplyTx}
+          />
+          <FormCard
+            isLoading={isLoading}
+            data={{
+              title: 'Withdraw',
+              balance: cEthBalance,
+              balanceUnit: 'cETH',
+              receivingUnit: 'ETH',
+            }}
+            getReceiving={calReceivingWithdraw}
+            submitTx={sendWithdrawTx}
+          />
         </>
       )}
     </>
