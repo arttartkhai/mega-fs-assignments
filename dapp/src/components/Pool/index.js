@@ -9,7 +9,7 @@ import {
 } from '../../contract/address';
 import FormCard from './FormCard';
 import SETTING from '../../constant/setting';
-import { formatNumber } from '../../utils/present';
+import { formatNumber, countDecimals } from '../../utils/present';
 import { SUPPLIER, MODAL } from '../../constant/type';
 import ModeSelector from './ModeSelector';
 import Alert from '../Alert';
@@ -131,6 +131,12 @@ const Pool = ({ openPopup, ...rest }) => {
       return;
     }
 
+    // NOTE: work-around to prevent big number
+    if (countDecimals(amount) > ETH_DECIMAL) {
+      openPopup({ type: MODAL.FAILED, message: 'Too many decimal' });
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -160,6 +166,13 @@ const Pool = ({ openPopup, ...rest }) => {
       openPopup({ type: MODAL.FAILED, message: 'Not sufficient' });
       return;
     }
+
+    // NOTE: work-around to prevent big number
+    if (countDecimals(amount) > 8) {
+      openPopup({ type: MODAL.FAILED, message: 'Too many decimal' });
+      return;
+    }
+
     try {
       setIsLoading(true);
 
