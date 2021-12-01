@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import cETH_ABI_Ropsten from '../../contract/ABI/cETH-Ropsten.json';
 import cETH_ABI_Rinkeby from '../../contract/ABI/cETH-Rinkeby.json';
 import {
@@ -52,7 +52,6 @@ const Pool = () => {
         try {
           let cTokenContract;
           let contractBalance;
-          // TODO move contract address to constant
           // Rinkeby
           if (chainId === 4) {
             cTokenContract = new web3.eth.Contract(
@@ -91,48 +90,45 @@ const Pool = () => {
     }
   }, [chainId]);
 
+  const fetchData = useCallback(async () => {
+    /* get supplied */
+    const balanceOfUnderlying =
+      web3.utils.toBN(
+        await cToken.methods.balanceOfUnderlying(account).call()
+      ) / Math.pow(10, ethDecimals);
+    setUserSupplied(formatNumber(balanceOfUnderlying));
+
+    const cTokenBalance =
+      (await cToken.methods.balanceOf(account).call()) / 1e8;
+    setCEthBalance(cTokenBalance);
+
+    let exchangeRateCurrent = await cToken.methods.exchangeRateCurrent().call();
+    exchangeRateCurrent =
+      exchangeRateCurrent / Math.pow(10, 18 + ethDecimals - 8);
+    setCEthExchangeRate(exchangeRateCurrent);
+
+    /* calculate APY */
+    const ethMantissa = 1e18;
+    const blocksPerDay = 6570; // 13.15 seconds per block
+    const daysPerYear = 365;
+    const supplyRatePerBlock = await cToken.methods.supplyRatePerBlock().call();
+    const supplyApy =
+      (Math.pow(
+        (supplyRatePerBlock / ethMantissa) * blocksPerDay + 1,
+        daysPerYear
+      ) -
+        1) *
+      100;
+    setApy(formatNumber(supplyApy, SETTING.ui.decimal.apy));
+
+    // get balance
+    const ethTokenBalance =
+      (await web3.eth.getBalance(account)) / Math.pow(10, ethDecimals);
+    setEthBalance(ethTokenBalance);
+  }, [cToken]);
+
   useEffect(() => {
     if (cToken) {
-      const fetchData = async () => {
-        /* get supplied */
-        const balanceOfUnderlying =
-          web3.utils.toBN(
-            await cToken.methods.balanceOfUnderlying(account).call()
-          ) / Math.pow(10, ethDecimals);
-        setUserSupplied(formatNumber(balanceOfUnderlying));
-
-        const cTokenBalance =
-          (await cToken.methods.balanceOf(account).call()) / 1e8;
-        setCEthBalance(cTokenBalance);
-
-        let exchangeRateCurrent = await cToken.methods
-          .exchangeRateCurrent()
-          .call();
-        exchangeRateCurrent =
-          exchangeRateCurrent / Math.pow(10, 18 + ethDecimals - 8);
-        setCEthExchangeRate(exchangeRateCurrent);
-
-        /* calculate APY */
-        const ethMantissa = 1e18;
-        const blocksPerDay = 6570; // 13.15 seconds per block
-        const daysPerYear = 365;
-        const supplyRatePerBlock = await cToken.methods
-          .supplyRatePerBlock()
-          .call();
-        const supplyApy =
-          (Math.pow(
-            (supplyRatePerBlock / ethMantissa) * blocksPerDay + 1,
-            daysPerYear
-          ) -
-            1) *
-          100;
-        setApy(formatNumber(supplyApy, SETTING.ui.decimal.apy));
-
-        // get balance
-        const ethTokenBalance =
-          (await web3.eth.getBalance(account)) / Math.pow(10, ethDecimals);
-        setEthBalance(ethTokenBalance);
-      };
       fetchData();
     }
   }, [cToken]);
@@ -150,12 +146,11 @@ const Pool = () => {
         from: account,
         value: web3.utils.toHex(web3.utils.toWei(amount?.toString(), 'ether')),
       });
-      // TODO: handle when click reject -> should not show loading
 
       if (receipt) {
         setIsLoading(false);
-
         alert('Transaction was submitted');
+        fetchData()
       }
     } catch (e) {
       console.error(e);
@@ -178,6 +173,7 @@ const Pool = () => {
       if (receipt) {
         setIsLoading(false);
         alert('Transaction was submitted');
+        fetchData()
       }
     } catch (e) {
       console.error(e);
@@ -199,9 +195,9 @@ const Pool = () => {
       {active && !errMessage && (
         <>
           <div className="grid grid-cols-3 gap-x-9">
-            <InfoBox>Your Supplied: {userSupplied} ETH</InfoBox>
-            <InfoBox>Total Supplied: {totalSupplied} ETH</InfoBox>
-            <InfoBox>APY: {apy} %</InfoBox>
+            <InfoBox>{`Your Supplied: ${userSupplied} ETH (${cEthBalance} cETH)`}</InfoBox>
+            <InfoBox>{`Total Supplied: ${totalSupplied} ETH`}</InfoBox>
+            <InfoBox>{`APY: ${apy} %`}</InfoBox>
           </div>
           <div className="flex">
             <ModeSelector mode={mode} switchModeTo={switchModeTo} />
