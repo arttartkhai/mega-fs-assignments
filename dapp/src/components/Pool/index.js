@@ -151,6 +151,7 @@ const Pool = ({ openPopup, ...rest }) => {
     } catch (e) {
       console.error(e);
       setErrMessage(e?.message);
+      setIsLoading(false);
     }
   };
 
@@ -162,6 +163,7 @@ const Pool = ({ openPopup, ...rest }) => {
     try {
       setIsLoading(true);
 
+      // TODO: handle underflow
       const receipt = await cToken.methods.redeem(amount * 1e8).send({
         from: account,
       });
@@ -177,6 +179,7 @@ const Pool = ({ openPopup, ...rest }) => {
     } catch (e) {
       console.error(e);
       setErrMessage(e?.message);
+      setIsLoading(false);
     }
   };
 
@@ -191,7 +194,7 @@ const Pool = ({ openPopup, ...rest }) => {
     <>
       {errMessage && <Alert message={errMessage?.toString()} />}
 
-      {active && !errMessage && (
+      {active && (
         <>
           <div className="grid grid-cols-3 gap-x-9">
             <InfoBox
