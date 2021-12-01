@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useWeb3React } from '@web3-react/core';
 import { useEffect, useState, useCallback } from 'react';
 import cETH_ABI_Ropsten from '../../contract/ABI/cETH-Ropsten.json';
@@ -17,7 +18,7 @@ import InfoBox from './InfoBox';
 const ETH_DECIMAL = 18;
 
 const Pool = ({ openPopup, ...rest }) => {
-  const { active, account, chainId, error, library: web3 } = useWeb3React();
+  const { active, account, chainId, library: web3 } = useWeb3React();
   const [cToken, setCToken] = useState(undefined);
   const [errMessage, setErrMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);

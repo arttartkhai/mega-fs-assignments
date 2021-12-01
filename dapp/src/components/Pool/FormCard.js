@@ -34,7 +34,7 @@ const FormCard = ({ isLoading, data, getReceiving, submitTx, ...rest }) => {
     if (amountValue) {
       setReceivingAmount(getReceiving(amountValue));
     }
-  }, [amountValue]);
+  }, [amountValue, getReceiving]);
 
   const setAmountToMax = () => {
     setAmountValue(balance);
