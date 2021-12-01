@@ -2,7 +2,7 @@ import { SUPPLIER } from '../../constant/type';
 
 const ModeSelector = ({ mode, switchModeTo }) => {
   return (
-    <>
+    <div className="flex flex-col">
       <button
         className={`relative  text-white p-5 w-52 rounded-2xl text-2xl font-medium overflow-hidden bg-blue-${
           mode === SUPPLIER.SUPPLY ? '500' : '300'
@@ -33,7 +33,7 @@ const ModeSelector = ({ mode, switchModeTo }) => {
           Beta
         </div>
       </button>
-    </>
+    </div>
   );
 };
 

@@ -53,7 +53,7 @@ const FormCard = ({ isLoading, data, getReceiving, submitTx, ...rest }) => {
   return (
     <>
       <div
-        className="flex flex-col bg-white shadow-md px-4 sm:px-6 md:px-8 lg:px-10 py-8 rounded-3xl w-50 max-w-md"
+        className="m-auto flex flex-col bg-white shadow-md px-4 sm:px-6 md:px-8 lg:px-10 py-8 rounded-3xl w-50 max-w-md"
         {...rest}
       >
         <div className="font-medium self-center text-xl sm:text-3xl text-gray-800">
@@ -71,7 +71,7 @@ const FormCard = ({ isLoading, data, getReceiving, submitTx, ...rest }) => {
               Max
             </div>
             <div className="flex items-center justify-center">
-              <span className={`w-1/4 ${logoClassName}`}/>
+              <span className={`w-1/4 ${logoClassName}`} />
               <input
                 type="number"
                 className="w-3/4 px-2 pb-1.5 text-primary text-base text-right font-light rounded-md border-2 border-pink-300"

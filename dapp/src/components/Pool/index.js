@@ -203,11 +203,9 @@ const Pool = () => {
             <InfoBox>Total Supplied: {totalSupplied} ETH</InfoBox>
             <InfoBox>APY: {apy} %</InfoBox>
           </div>
-          <div className="grid grid-cols-4">
-            <div className="col-span-1">
-              <ModeSelector mode={mode} switchModeTo={switchModeTo} />
-            </div>
-            <div className="col-span-3 justify-self-center">
+          <div className="flex">
+            <ModeSelector mode={mode} switchModeTo={switchModeTo} />
+            <div className="flex-grow">
               {mode === SUPPLIER.SUPPLY && (
                 <FormCard
                   isLoading={isLoading}
