@@ -1,7 +1,7 @@
 const Alert = ({ message }) => {
   return (
     <div
-      class="flex bg-red-100 rounded-lg p-4 mb-4 text-sm text-red-700"
+      class="w-full flex bg-red-100 rounded-lg p-4 mb-4 text-sm text-red-700"
       role="alert"
     >
       <svg
@@ -17,8 +17,7 @@ const Alert = ({ message }) => {
         ></path>
       </svg>
       <div>
-        {message}
-        <span class="font-medium"> Please try again</span>
+        <span class="font-medium">{message}</span>
       </div>
     </div>
   );

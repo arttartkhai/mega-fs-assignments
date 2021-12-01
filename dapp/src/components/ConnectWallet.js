@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
+import Alert from './Alert';
 
 import { useEagerConnect, useInactiveListener } from '../hooks';
 import connectorList, { resetWalletConnectConnector } from '../lib/connectors';
@@ -35,6 +36,18 @@ const ConnectWallet = () => {
 
   return (
     <>
+      {!active && error && (
+        <div className='w-full flex flex-col items-center'>
+          <Alert message={error?.message} />
+          <button
+            class="bg-red-600 font-semibold text-white p-3 rounded-full hover:bg-red-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
+            onClick={handleRetry}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {active && (
         // <button className="button-disconnect" onClick={handleDisconnect}>
         //   Disconnect Wallet
@@ -76,7 +89,6 @@ const ConnectWallet = () => {
           </button> */}
         </div>
       )}
-      {!active && error && <button onClick={handleRetry}>Retry</button>}
     </>
   );
 };

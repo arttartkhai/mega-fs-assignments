@@ -7,7 +7,7 @@ import SETTING from '../../constant/setting';
 import { formatNumber } from '../../utils/present';
 import { SUPPLIER } from '../../constant/type';
 import ModeSelector from './ModeSelector';
-import Alert from './Alert';
+import Alert from '../Alert';
 
 const ethDecimals = 18;
 
