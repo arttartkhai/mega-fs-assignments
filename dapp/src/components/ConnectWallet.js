@@ -40,7 +40,7 @@ const ConnectWallet = () => {
         <div className='w-full flex flex-col items-center'>
           <Alert message={error?.message} />
           <button
-            class="bg-red-600 font-semibold text-white p-3 rounded-full hover:bg-red-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
+            className="bg-red-600 font-semibold text-white p-3 rounded-full hover:bg-red-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
             onClick={handleRetry}
           >
             Retry
@@ -49,14 +49,11 @@ const ConnectWallet = () => {
       )}
 
       {active && (
-        // <button className="button-disconnect" onClick={handleDisconnect}>
-        //   Disconnect Wallet
-        // </button>
         <div className="flex w-full justify-end">
           <button
             data-modal-toggle="example"
             data-modal-action="open"
-            class="bg-red-600 font-semibold text-white p-3 rounded-full hover:bg-red-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
+            className="bg-red-600 font-semibold text-white p-3 rounded-full hover:bg-red-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
             onClick={handleDisconnect}
           >
             Disconnect Wallet
@@ -68,7 +65,7 @@ const ConnectWallet = () => {
           <button
             data-modal-toggle="example"
             data-modal-action="open"
-            class="bg-green-500 font-semibold text-white p-3 rounded-full hover:bg-green-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
+            className="bg-green-500 font-semibold text-white p-3 rounded-full hover:bg-green-700 focus:outline-none focus:ring shadow-lg hover:shadow-none transition-all duration-300 m-2"
             onClick={handleClick('MetaMask')}
             disabled={isConnecing}
           >
