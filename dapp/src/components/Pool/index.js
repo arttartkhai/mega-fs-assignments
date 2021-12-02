@@ -131,7 +131,6 @@ const Pool = ({ openPopup, ...rest }) => {
       return;
     }
 
-    // NOTE: work-around to prevent big number
     if (countDecimals(amount) > ETH_DECIMAL) {
       openPopup({ type: MODAL.FAILED, message: 'Too many decimal' });
       return;
@@ -167,7 +166,6 @@ const Pool = ({ openPopup, ...rest }) => {
       return;
     }
 
-    // NOTE: work-around to prevent big number
     if (countDecimals(amount) > 8) {
       openPopup({ type: MODAL.FAILED, message: 'Too many decimal' });
       return;
@@ -176,8 +174,10 @@ const Pool = ({ openPopup, ...rest }) => {
     try {
       setIsLoading(true);
 
-      // TODO: handle underflow
-      const receipt = await cToken.methods.redeem(amount * 1e8).send({
+      const BN = web3.utils.BN;
+      const amountBN = new BN(amount * 1e8);
+
+      const receipt = await cToken.methods.redeem(amountBN.toNumber()).send({
         from: account,
       });
 
