@@ -1,8 +1,9 @@
 # Simple DAPP
 
-This project shows a simple interface to interact with [Compound Finance](https://compound.finance/) on Testnet. You can try it on
+This project was an experiment of building a simple interface interacting with [Compound Finance](https://compound.finance/) smart contract on Testnet.\
+You can try it on
 
-- ## [Demo App](https://arttartkhai-compound.vercel.app)
+- **[Demo App](https://arttartkhai-compound.vercel.app)**
 - Run in local by following below instruction.
 
 # Getting Started
@@ -15,6 +16,7 @@ This project shows a simple interface to interact with [Compound Finance](https:
 ## Run Project
 
 ### 1. `yarn install`
+
 > Install dependency
 
 ### 2. `yarn start`
@@ -26,5 +28,3 @@ This project shows a simple interface to interact with [Compound Finance](https:
 ## Build Project
 
 ### `yarn build`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
