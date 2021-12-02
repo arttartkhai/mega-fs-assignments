@@ -7,8 +7,8 @@ const solve = (wordList = [], target = '') => {
     const startWord = target.slice(0, i);
     const endWord = target.slice(i);
 
-    const startWordIndex = wordList.findIndex((w) => w === startWord);
-    const endWordIndex = wordList.findIndex((w) => w === endWord);
+    const startWordIndex = wordList.findIndex((word) => word === startWord);
+    const endWordIndex = wordList.findIndex((word) => word === endWord);
 
     if (
       startWordIndex !== -1 &&

@@ -212,7 +212,7 @@ const Pool = ({ openPopup, ...rest }) => {
           <div className="grid grid-cols-3 gap-x-9">
             <InfoBox
               title={'Your Supplied'}
-              data={`${userSupplied} ETH (${cEthBalance} cETH)`}
+              data={`${userSupplied} ETH (${formatNumber(cEthBalance)} cETH)`}
             />
             <InfoBox title={'Total Supplied'} data={`${totalSupplied} ETH`} />
             <InfoBox title={'APY'} data={`${apy} %`} />
