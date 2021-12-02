@@ -1,23 +1,22 @@
-const solve = (wordList = [], target = '') => {
-  /* Description 
-  *   - separate target word into 2 fragments, and then find those fragments inside word list 
-  */ 
+const { readFileSync, writeFileSync } = require('fs');
+const chalk = require('chalk');
+const { solve } = require('./solve');
 
-  for (let i = 1; i < target.length; i++) {
-    const startWord = target.slice(0, i);
-    const endWord = target.slice(i);
+// Read Input
+const wordListInput = readFileSync('./input/word_list.txt', 'utf-8');
+const target = readFileSync('./input/target.txt', 'utf-8');
 
-    const startWordIndex = wordList.findIndex((w) => w === startWord);
-    const endWordIndex = wordList.findIndex((w) => w === endWord);
+// Transform word_list.txt to array
+const wordList = wordListInput?.split(/\n/);
 
-    if (startWordIndex !== -1 && endWordIndex !== -1 && startWordIndex !== endWordIndex) {
-      return [wordList[startWordIndex], wordList[endWordIndex]];
-    }
-  }
+// Solving
+const result = solve(wordList, target);
 
-  return null;
-};
+// Write output
+writeFileSync('./output/solve_result.txt', result.toString());
 
-module.exports = {
-  solve,
-};
+// Show result
+console.log(
+  chalk.cyanBright.bgBlack('The result is  -->  '),
+  chalk.green(result)
+);
