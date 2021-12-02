@@ -3,7 +3,6 @@ export default {
   ui: {
     decimal: {
       apy: 2,
-      totalSupplied: 2,
       amount: 5,
     },
   },

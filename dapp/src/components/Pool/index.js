@@ -70,7 +70,7 @@ const Pool = ({ openPopup, ...rest }) => {
             'ether'
           );
           setTotalSupplied(
-            formatNumber(contractBalanceInEth, SETTING.ui.decimal.totalSupplied)
+            formatNumber(contractBalanceInEth)
           );
           // TODO: add event listener for update data
         } catch (e) {
