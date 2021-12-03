@@ -22,6 +22,8 @@
      ├-- ...
 
 ```
+## Steps of testing
+
 
 1.  Specify your input by put it into the text file under `input` directory
 
