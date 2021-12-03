@@ -1,5 +1,4 @@
 const { readFileSync, writeFileSync } = require('fs');
-const chalk = require('chalk');
 const { solve } = require('./solve');
 
 // Read Input
@@ -16,7 +15,4 @@ const result = solve(wordList, target);
 writeFileSync('./output/solve_result.txt', result.toString());
 
 // Show result
-console.log(
-  chalk.cyanBright.bgBlack('The result is  -->  '),
-  chalk.green(result)
-);
+console.log('The result is  -->  ', result);
