@@ -81,11 +81,11 @@ T(m,n) = n * [ t(statement1) + t(statement2) ]
 
 each statement represents the code explanation above
 
-- statement1 - assume that .slice is O(1) so statement1 will be O(2), we can neglect
-- statement2 - assume that .findIndex is a O(N), so statement2 will be O(2N) ≈ O(N)
+- statement1 - assume that .slice is O(n)
+- statement2 - assume that .findIndex is O(m)
 
 ```
-T(m,n) = n * [ k + 2m ] ≈ n * [ 2m ] ≈ 2mn ≈ mn
+T(m,n) = n * [ n + m ] ≈ n² + mn
 ```
 
-**Therefore, the algorithm has `O(mn)` time complexity**
+**Therefore, the algorithm has `O(n² + mn)` time complexity; where m, n is the size of `wordList` and `target` respectively**

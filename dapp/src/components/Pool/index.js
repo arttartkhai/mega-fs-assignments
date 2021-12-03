@@ -69,9 +69,7 @@ const Pool = ({ openPopup, ...rest }) => {
             contractBalance,
             'ether'
           );
-          setTotalSupplied(
-            formatNumber(contractBalanceInEth)
-          );
+          setTotalSupplied(formatNumber(contractBalanceInEth));
           // TODO: add event listener for update data
         } catch (e) {
           console.error(e);
@@ -82,7 +80,7 @@ const Pool = ({ openPopup, ...rest }) => {
     }
   }, [chainId]);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     /* get supplied */
     const balanceOfUnderlying =
       web3.utils.toBN(
@@ -117,13 +115,13 @@ const Pool = ({ openPopup, ...rest }) => {
     const ethTokenBalance =
       (await web3.eth.getBalance(account)) / Math.pow(10, ETH_DECIMAL);
     setEthBalance(ethTokenBalance);
-  }, [cToken]);
+  };
 
   useEffect(() => {
     if (cToken) {
       fetchData();
     }
-  }, [cToken]);
+  }, [cToken, account]);
 
   const sendSupplyTx = async (amount) => {
     if (amount > ethBalance && amount > 0) {
