@@ -4,7 +4,7 @@ const ModeSelector = ({ mode, switchModeTo }) => {
   const isSelectingSupply = mode === SUPPLIER.SUPPLY;
   const isSelectingWithdraw = mode === SUPPLIER.WITHDRAW;
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-row md:flex-col gap-3">
       <button
         className={`relative  text-white p-5 w-52 rounded-2xl text-2xl font-medium overflow-hidden bg-blue-500 ${
           isSelectingWithdraw && 'opacity-50'
@@ -21,7 +21,7 @@ const ModeSelector = ({ mode, switchModeTo }) => {
         </div>
       </button>
       <button
-        className={`mt-3 relative  text-white p-5 w-52 rounded-2xl text-2xl font-medium overflow-hidden bg-blue-500 ${
+        className={`md:mt-3 relative  text-white p-5 w-52 rounded-2xl text-2xl font-medium overflow-hidden bg-blue-500 ${
           isSelectingSupply && 'opacity-50'
         }`}
         onClick={() => switchModeTo(SUPPLIER.WITHDRAW)}

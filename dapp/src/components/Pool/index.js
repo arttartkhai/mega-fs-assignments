@@ -219,7 +219,7 @@ const Pool = ({ openPopup, ...rest }) => {
 
       {active && (
         <>
-          <div className="grid grid-cols-3 gap-x-9">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-9">
             <InfoBox
               title={'Your Supplied'}
               data={`${userSupplied} ETH (${formatNumber(cEthBalance)} cETH)`}
@@ -227,7 +227,7 @@ const Pool = ({ openPopup, ...rest }) => {
             <InfoBox title={'Total Supplied'} data={`${totalSupplied} ETH`} />
             <InfoBox title={'APY'} data={`${apy} %`} />
           </div>
-          <div className="flex">
+          <div className="flex flex-col md:flex-row">
             <ModeSelector mode={mode} switchModeTo={switchModeTo} />
             <div className="flex-grow">
               {mode === SUPPLIER.SUPPLY && (
