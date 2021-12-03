@@ -85,40 +85,46 @@ const Pool = ({ openPopup, ...rest }) => {
   }, [chainId]);
 
   const fetchData = async () => {
-    /* get supplied */
-    const balanceOfUnderlying =
-      web3.utils.toBN(
-        await cToken.methods.balanceOfUnderlying(account).call()
-      ) / Math.pow(10, ETH_DECIMAL);
-    setUserSupplied(formatNumber(balanceOfUnderlying));
+    if (cToken && web3) {
+      /* get supplied */
+      const balanceOfUnderlying =
+        web3.utils.toBN(
+          await cToken.methods.balanceOfUnderlying(account).call()
+        ) / Math.pow(10, ETH_DECIMAL);
+      setUserSupplied(formatNumber(balanceOfUnderlying));
 
-    const cTokenBalance =
-      (await cToken.methods.balanceOf(account).call()) / 1e8;
-    setCEthBalance(cTokenBalance);
+      const cTokenBalance =
+        (await cToken.methods.balanceOf(account).call()) / 1e8;
+      setCEthBalance(cTokenBalance);
 
-    let exchangeRateCurrent = await cToken.methods.exchangeRateCurrent().call();
-    exchangeRateCurrent =
-      exchangeRateCurrent / Math.pow(10, 18 + ETH_DECIMAL - 8);
-    setCEthExchangeRate(exchangeRateCurrent);
+      let exchangeRateCurrent = await cToken.methods
+        .exchangeRateCurrent()
+        .call();
+      exchangeRateCurrent =
+        exchangeRateCurrent / Math.pow(10, 18 + ETH_DECIMAL - 8);
+      setCEthExchangeRate(exchangeRateCurrent);
 
-    /* calculate APY */
-    const ethMantissa = 1e18;
-    const blocksPerDay = 6570; // 13.15 seconds per block
-    const daysPerYear = 365;
-    const supplyRatePerBlock = await cToken.methods.supplyRatePerBlock().call();
-    const supplyApy =
-      (Math.pow(
-        (supplyRatePerBlock / ethMantissa) * blocksPerDay + 1,
-        daysPerYear
-      ) -
-        1) *
-      100;
-    setApy(formatNumber(supplyApy, SETTING.ui.decimal.apy));
+      /* calculate APY */
+      const ethMantissa = 1e18;
+      const blocksPerDay = 6570; // 13.15 seconds per block
+      const daysPerYear = 365;
+      const supplyRatePerBlock = await cToken.methods
+        .supplyRatePerBlock()
+        .call();
+      const supplyApy =
+        (Math.pow(
+          (supplyRatePerBlock / ethMantissa) * blocksPerDay + 1,
+          daysPerYear
+        ) -
+          1) *
+        100;
+      setApy(formatNumber(supplyApy, SETTING.ui.decimal.apy));
 
-    // get balance
-    const ethTokenBalance =
-      (await web3.eth.getBalance(account)) / Math.pow(10, ETH_DECIMAL);
-    setEthBalance(ethTokenBalance);
+      // get balance
+      const ethTokenBalance =
+        (await web3.eth.getBalance(account)) / Math.pow(10, ETH_DECIMAL);
+      setEthBalance(ethTokenBalance);
+    }
   };
 
   useEffect(() => {
