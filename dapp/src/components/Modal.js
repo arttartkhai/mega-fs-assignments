@@ -1,7 +1,7 @@
 import { MODAL } from '../constant/type';
 
 const Modal = ({ payload, closePopup }) => {
-  const { type, message } = payload;
+  const { type, message, url } = payload;
   // TODO: add more type option
   const isSuccessType = type === MODAL.SUCCESS;
 
@@ -28,7 +28,17 @@ const Modal = ({ payload, closePopup }) => {
             <p class="text-gray-600 dark:text-gray-100 text-md py-2 px-6">
               {message}
             </p>
-            <div class="flex items-center justify-between gap-4 w-full mt-8">
+            <div class="flex flex-col items-center justify-between gap-4 w-full mt-8">
+              {url && (
+                <div
+                  type="button"
+                  class="py-2 px-4  bg-green-600 hover:bg-green-700 focus:ring-green-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-2xl "
+                >
+                  <a href={url} target="_blank" rel="noreferrer">
+                    View transaction
+                  </a>
+                </div>
+              )}
               <button
                 type="button"
                 class="py-2 px-4  bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-2xl "

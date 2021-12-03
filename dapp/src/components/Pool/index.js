@@ -9,7 +9,11 @@ import {
 } from '../../contract/address';
 import FormCard from './FormCard';
 import SETTING from '../../constant/setting';
-import { formatNumber, countDecimals } from '../../utils/present';
+import {
+  formatNumber,
+  countDecimals,
+  getUrlExplorer,
+} from '../../utils/present';
 import { SUPPLIER, MODAL } from '../../constant/type';
 import ModeSelector from './ModeSelector';
 import Alert from '../Alert';
@@ -147,6 +151,7 @@ const Pool = ({ openPopup, ...rest }) => {
         openPopup({
           type: MODAL.SUCCESS,
           message: 'Transaction was submitted',
+          url: getUrlExplorer(chainId, receipt?.transactionHash),
         });
 
         fetchData();
@@ -180,10 +185,12 @@ const Pool = ({ openPopup, ...rest }) => {
       });
 
       if (receipt) {
+        console.log("🚀 ~ file: index.js ~ line 188 ~ sendWithdrawTx ~ receipt", receipt)
         setIsLoading(false);
         openPopup({
           type: MODAL.SUCCESS,
           message: 'Transaction was submitted',
+          url: getUrlExplorer(chainId, receipt?.transactionHash),
         });
         fetchData();
       }
