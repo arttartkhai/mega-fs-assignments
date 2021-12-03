@@ -1,6 +1,6 @@
 # Simple DAPP
 
-This project was an experiment of building a simple interface interacting with [Compound Finance](https://compound.finance/) smart contract on Testnet.\
+This project was for an experiment of building a simple interface interacting with [Compound Finance](https://compound.finance/) smart contract on Testnet.\
 You can try it on
 
 - **[Demo App](https://arttartkhai-compound.vercel.app)**

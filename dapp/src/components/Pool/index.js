@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useWeb3React } from '@web3-react/core';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import cETH_ABI_Ropsten from '../../contract/ABI/cETH-Ropsten.json';
 import cETH_ABI_Rinkeby from '../../contract/ABI/cETH-Rinkeby.json';
 import {
