@@ -185,7 +185,6 @@ const Pool = ({ openPopup, ...rest }) => {
       });
 
       if (receipt) {
-        console.log("🚀 ~ file: index.js ~ line 188 ~ sendWithdrawTx ~ receipt", receipt)
         setIsLoading(false);
         openPopup({
           type: MODAL.SUCCESS,
